@@ -1,0 +1,59 @@
+---
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: check-executables-have-shebangs
+      - id: check-shebang-scripts-are-executable
+      - id: check-json
+      - id: check-yaml
+      - id: end-of-file-fixer
+      - id: pretty-format-json
+        args:
+          - --autofix
+          - --no-sort-keys
+      - id: trailing-whitespace
+  - repo: https://github.com/jumanjihouse/pre-commit-hook-yamlfmt
+    rev: 0.2.3
+    hooks:
+      - id: yamlfmt
+        name: Format YAML files
+        args:
+          - --mapping=2
+          - --sequence=4
+          - --offset=2
+  - repo: https://github.com/adrienverge/yamllint
+    rev: v1.38.0
+    hooks:
+      - id: yamllint
+        name: Lint YAML files
+        args:
+          - --format=parsable
+          - --config-data=relaxed
+  - repo: https://github.com/maxwinterstein/shfmt-py
+    rev: v4.0.0
+    hooks:
+      - id: shfmt
+        name: Format shell scripts
+        args:
+          - -w
+          - -i=2
+  - repo: https://github.com/shellcheck-py/shellcheck-py
+    rev: v0.11.0.1
+    hooks:
+      - id: shellcheck
+        name: Lint shell scripts
+  - repo: https://github.com/reteps/dockerfmt
+    rev: v0.5.2
+    hooks:
+      - id: dockerfmt
+        name: Format Dockerfiles
+        args:
+          - --indent=4
+          - --newline
+          - --write
+  - repo: https://github.com/AleksaC/hadolint-py
+    rev: v2.14.0
+    hooks:
+      - id: hadolint
+        name: Lint Dockerfiles
