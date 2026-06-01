@@ -1,0 +1,26 @@
+---
+services:
+  opencode:
+    image: ${AGENT_IMAGE_PREFIX:-agent}/opencode
+    build:
+      context: ./src/opencode
+      dockerfile: Dockerfile
+      args:
+        BASE_IMAGE_REPO:
+        BASE_IMAGE_TAG:
+    environment:
+      TZ: ${TZ:-Asia/Tokyo}
+      TERM: ${TERM:-xterm-256color}
+      COLORTERM: ${COLORTERM:-truecolor}
+      OPENCODE_CONFIG_DIR: /opencode_config
+    volumes:
+      - type: bind
+        source: ${WORKSPACE:-..}
+        target: /workspaces/main
+      - type: bind
+        source: ${AGENT_HOME:-./agent-home}
+        target: /home/agent
+      - type: bind
+        source: ${OPENCODE_CONFIG_DIR:-./.opencode}
+        target: /opencode_config
+    working_dir: /workspaces/main
