@@ -23,4 +23,11 @@ services:
       - type: bind
         source: ${OPENCODE_CONFIG_DIR:-./.opencode}
         target: /opencode_config
+      - type: volume
+        source: docker-data
+        target: /var/lib/docker
     working_dir: /workspaces/main
+    privileged: true
+
+volumes:
+  docker-data:
