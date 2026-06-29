@@ -1,27 +1,27 @@
 ARG BASE_IMAGE_REPO=agent/opencode
 ARG BASE_IMAGE_TAG=latest
-ARG DOCKER_CLI_VERSION=26.1.4
 
 FROM ${BASE_IMAGE_REPO}:${BASE_IMAGE_TAG}
 
-ARG DOCKER_CLI_VERSION
 USER root
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 ENV UV_TOOL_DIR=/opt/uv-tools
 ENV UV_TOOL_BIN_DIR=/usr/local/bin
  RUN uv tool install pre-commit==4.6.0
 
-# Install Docker Engine (DinD) via Debian apt package
-RUN apt-get update \
+# Install Docker CE + buildx from Docker's official apt repo
+RUN mkdir -p /etc/apt/keyrings \
+    && curl -fsSL https://download.docker.com/linux/debian/gpg -o /tmp/docker.gpg \
+    && rm -f /etc/apt/keyrings/docker.gpg \
+    && gpg --batch --dearmor -o /etc/apt/keyrings/docker.gpg /tmp/docker.gpg \
+    && rm /tmp/docker.gpg \
+    && echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian bookworm stable" \
+        >/etc/apt/sources.list.d/docker.list \
+    && apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        docker.io \
+        docker-ce docker-buildx-plugin \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
-
-# Install Docker CLI (static binary — Debian's docker.io package is daemon-only)
-RUN curl -fsSL "https://download.docker.com/linux/static/stable/x86_64/docker-${DOCKER_CLI_VERSION}.tgz" \
-    | tar -xz -C /usr/bin --strip-components=1 docker/docker \
-    && chmod +x /usr/bin/docker
 
 # Create docker group and grant users access
 RUN groupadd -f docker \
