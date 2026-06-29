@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1
 ARG BASE_IMAGE_REPO=agent/opencode
 ARG BASE_IMAGE_TAG=latest
 
@@ -29,8 +30,7 @@ RUN groupadd -f docker \
     && usermod -aG docker dev 2>/dev/null || true
 
 # DinD entrypoint wrapper: starts dockerd before chaining to base entrypoint
-COPY dind-entrypoint.sh /usr/local/bin/dind-entrypoint.sh
-RUN chmod +x /usr/local/bin/dind-entrypoint.sh
+COPY --chmod=0755 dind-entrypoint.sh /usr/local/bin/dind-entrypoint.sh
 
 ENTRYPOINT ["/usr/local/bin/dind-entrypoint.sh"]
 CMD ["opencode"]
